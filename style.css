@@ -1,4 +1,24 @@
-html {
-  height: 100%;
-  width: 100%;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0fdf4; /* Light green background */
+}
+.container {
+    max-width: 600px;
+}
+img#tree {
+    height: 350px;
+    width: auto;
+    object-fit: contain;
+}
+#status img {
+    width: 40px;
+    height: 40px;
+}
+input, select {
+    border: 1px solid #d1d5db;
+    padding: 8px;
+    border-radius: 8px;
+    width: 100%;
+    background-color: #fff;
 }

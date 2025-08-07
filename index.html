@@ -1,16 +1,73 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Growth Tracker</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Link to our external stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
+<body class="p-4 flex items-center justify-center min-h-screen">
+    <div class="container bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+        <h1 class="text-3xl font-bold text-green-800 text-center mb-6">ปลูกต้นไม้กัน!</h1>
 
-<body>
-  Hello world
-  <script src="script.js"></script>
+        <!-- Student Selector and Refresh Button -->
+        <div class="flex flex-col md:flex-row items-center gap-4 mb-6">
+            <div class="flex-1 w-full">
+                <label for="Student name" class="block text-sm font-medium text-gray-700">เลือกนักเรียน:</label>
+                <select id="Student name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                    <option value="">-- เลือกชื่อนักเรียน --</option>
+                    <!-- Student names will be populated dynamically by script.js -->
+                </select>
+            </div>
+            <button onclick="loadStudentData()" class="mt-4 md:mt-0 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
+                🔄 Refresh Data
+            </button>
+        </div>
+
+        <!-- Tree Visualization Area -->
+        <div id="tree-area" class="flex flex-col items-center justify-center p-8 bg-green-50 rounded-2xl border border-green-200">
+            <!-- The tree image will be updated here -->
+            <img id="tree" src="new_soil.png.jpg" alt="A growing tree" class="transition-transform duration-500 ease-in-out transform hover:scale-105">
+            <!-- Score and status will be updated here -->
+            <div id="score-display" class="mt-4 text-center"></div>
+            <div id="status" class="mt-4 flex gap-2"></div>
+        </div>
+
+        <!-- Configuration Panel Toggle Button -->
+        <div class="text-center mt-6">
+            <button onclick="toggleConfig()" class="text-green-600 hover:text-green-800 text-sm font-semibold transition-colors">
+                ⚙️ Advanced Configuration
+            </button>
+        </div>
+
+        <!-- Configuration Panel (initially hidden) -->
+        <div id="config-panel" class="mt-6 p-6 border border-gray-300 bg-gray-50 rounded-lg hidden">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Configuration</h3>
+
+            <div class="mb-4">
+                <label for="sheet-url-input" class="block text-sm font-medium text-gray-700">Google Sheet URL (CSV Export)</label>
+                <input type="text" id="sheet-url-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                <button onclick="updateSheetURL()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                    Update URL
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-semibold text-gray-800">Tree Growth Thresholds</h4>
+                <div id="threshold-inputs" class="mt-2 space-y-2">
+                    <!-- Threshold inputs will be dynamically generated here -->
+                </div>
+                <button onclick="updateThresholds()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                    Update Thresholds
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <!-- Link to our external script -->
+    <script src="script.js"></script>
 </body>
-
 </html>
