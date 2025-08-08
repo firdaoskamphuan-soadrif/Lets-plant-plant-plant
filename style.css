@@ -1,24 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f0fdf4; /* Light green background */
+    font-size: 1.125rem; /* Make text a bit larger for readability */
+    margin: 0;
+    padding: 0;
 }
+
 .container {
-    max-width: 600px;
+    max-width: 90%; /* Adjust container width for better mobile experience */
+    margin: auto;
+    padding: 1rem;
 }
+
+/* Adjustments for the tree image to be fully responsive */
 img#tree {
-    height: 350px;
-    width: auto;
-    object-fit: contain;
+    max-height: 100vh; /* Set a maximum height relative to the viewport height */
+    width: 150%; /* Make the width fill its container */
+    height: auto; /* Allow the height to adjust automatically */
+    object-fit: contain; /* Ensure the image fits without being distorted */
+    display: block; /* Remove any extra spacing */
+    margin-left: auto;
+    margin-right: auto;
 }
+
 #status img {
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 60px;
 }
+
 input, select {
     border: 1px solid #d1d5db;
     padding: 8px;
     border-radius: 8px;
     width: 100%;
     background-color: #fff;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
