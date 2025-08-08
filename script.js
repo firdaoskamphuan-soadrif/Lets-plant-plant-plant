@@ -9,7 +9,7 @@ const TREE_STAGES = [
     { minScore: 400, image: "S__4636705_0.jpg", name: "เริ่มมีผลแล้ววว คุณเก่งมาก" },
     { minScore: 350, image: "S__4636706_0.jpg", name: "คุณดูแลต้นไม้ดีมากเลย" },
     { minScore: 300, image: "S__4636707_0.jpg", name: "ดอกเต็มต้นแล้ว รอผลได้เลยย" },
-    { minScore: 250, image: "S__4636708.jpg", name: "ดอกไม้ของคุณสวยมากเลย" },
+    { minScore: 250, image: "S__4636708_0.jpg", name: "ดอกไม้ของคุณสวยมากเลย" },
     { minScore: 200, image: "S__4636709_0.jpg", name: "โอ๊ะ มีดอกแล้ววว" },
     { minScore: 150, image: "S__4636710_0.jpg", name: "กำลังโตอย่างดีเลยนะ" },
     { minScore: 100, image: "S__4636712_0.jpg", name: "โตขึ้นมากเลยยย" },
@@ -85,7 +85,7 @@ async function loadStudentData() {
         for (let row of rows) {
             const cols = row.split(",");
             // Skip empty rows
-            if (cols.length < 3) continue;
+    if (cols.length < 3) continue;
 
             const studentName = cols[1]?.trim(); // Student name is in column 2 (index 1)
 
@@ -123,7 +123,7 @@ function updateTree(score, status) {
     const treeImageElement = document.getElementById("tree");
     treeImageElement.src = treeImg;
     // Add classes for responsive sizing
-    treeImageElement.className = "w-full h-full object-contain"; 
+    treeImageElement.className = "w-full h-full object-contain";
 
     // Add score and stage display
     const currentStage = TREE_STAGES.find(stage => score >= stage.minScore);
@@ -252,5 +252,8 @@ function showMessageBox(message) {
     document.body.appendChild(messageBox);
 }
 
-// Call this function when the page loads to populate the dropdown
-window.onload = fetchAndPopulateStudentDropdown;
+// Call this function when the page loads to populate the dropdown and load initial data
+window.onload = async function() {
+    await fetchAndPopulateStudentDropdown();
+    loadStudentData(); // โหลดข้อมูลเมื่อหน้าเว็บเปิดครั้งแรก
+};
