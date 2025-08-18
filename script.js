@@ -1,21 +1,21 @@
 // Use the user's provided code and modify it
 let baseSheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNZpT2Gf8vpY5OibevC59cs1f97cEpstEZXih1vpb7Yft4Qcx4sgbpqMXX5tJ_2NyNwfD_9mRINKQb/pub?output=csv";
 
-// Tree growth configuration - easy to modify
-// IMPORTANT: The image URLs below are now updated to your provided filenames.
-// Ensure these files are in the same directory as this script.
+// Tree growth configuration - now using video filenames
+// NOTE: The video URLs below are based on the files you provided.
 const TREE_STAGES = [
-    { minScore: 450, image: "S__4636702_0.jpg", name: "ผลเต็มต้นแล้ว สุดยอด!" },
-    { minScore: 400, image: "S__4636705_0.jpg", name: "เริ่มมีผลแล้ววว คุณเก่งมาก" },
-    { minScore: 350, image: "S__4636706_0.jpg", name: "คุณดูแลต้นไม้ดีมากเลย" },
-    { minScore: 300, image: "S__4636707_0.jpg", name: "ดอกเต็มต้นแล้ว รอผลได้เลยย" },
-    { minScore: 250, image: "S__4636708_0.jpg", name: "ดอกไม้ของคุณสวยมากเลย" },
-    { minScore: 200, image: "S__4636709_0.jpg", name: "โอ๊ะ มีดอกแล้ววว" },
-    { minScore: 150, image: "S__4636710_0.jpg", name: "กำลังโตอย่างดีเลยนะ" },
-    { minScore: 100, image: "S__4636712_0.jpg", name: "โตขึ้นมากเลยยย" },
-    { minScore: 50, image: "S__4636713_0.jpg", name: "ต้นกล้าขึ้นแล้ว จะต้องโตขึ้นแน่นอน" },
-    { minScore: 20, image: "S__4636715_0.jpg", name: "หว่านเมล็ดพันธ์ุ รอดูต้นไม้โตได้เลย" },
-    { minScore: 0, image: "S__4636716_0.jpg", name: "คุณมีที่ดินแล้ว เพิ่มคะแนนเพี่อปลูกต้นไม้ของคุณ" }
+    { minScore: 500, video: "552.mp4", name: "คะแนนสูงสุด! ต้นไม้เติบโตอย่างสมบูรณ์" },
+    { minScore: 450, video: "551.mp4", name: "ผลเต็มต้นแล้ว สุดยอด!" },
+    { minScore: 400, video: "550.mp4", name: "เริ่มมีผลแล้ววว คุณเก่งมาก" },
+    { minScore: 350, video: "549.mp4", name: "คุณดูแลต้นไม้ดีมากเลย" },
+    { minScore: 300, video: "548.mp4", name: "ดอกเต็มต้นแล้ว รอผลได้เลยย" },
+    { minScore: 250, video: "547.mp4", name: "ดอกไม้ของคุณสวยมากเลย" },
+    { minScore: 200, video: "546.mp4", name: "โอ๊ะ มีดอกแล้ววว" },
+    { minScore: 150, video: "545.mp4", name: "กำลังโตอย่างดีเลยนะ" },
+    { minScore: 100, video: "544.mp4", name: "โตขึ้นมากเลยยย" },
+    { minScore: 50, video: "543.mp4", name: "ต้นกล้าขึ้นแล้ว จะต้องโตขึ้นแน่นอน" },
+    { minScore: 20, video: "542.mp4", name: "หว่านเมล็ดพันธ์ุ รอดูต้นไม้โตได้เลย" },
+    { minScore: 0, video: "541.mp4", name: "คุณมีที่ดินแล้ว เพิ่มคะแนนเพี่อปลูกต้นไม้ของคุณ" }
 ];
 
 async function fetchAndPopulateStudentDropdown() {
@@ -59,9 +59,8 @@ async function loadStudentData() {
 
     if (!student) {
         console.log("No student selected");
-        // Use the user-provided image for the default state
-        document.getElementById("tree").src = TREE_STAGES[TREE_STAGES.length - 1].image;
-        document.getElementById("status").innerHTML = "";
+        // Use the default video for the default state
+        updateTree(0, "");
         document.getElementById("score-display").innerHTML = "";
         return;
     }
@@ -85,7 +84,7 @@ async function loadStudentData() {
         for (let row of rows) {
             const cols = row.split(",");
             // Skip empty rows
-    if (cols.length < 3) continue;
+            if (cols.length < 3) continue;
 
             const studentName = cols[1]?.trim(); // Student name is in column 2 (index 1)
 
@@ -117,13 +116,23 @@ async function loadStudentData() {
 function updateTree(score, status) {
     // Find the appropriate tree stage
     const stage = TREE_STAGES.find(stage => score >= stage.minScore);
-    const treeImg = stage ? stage.image : TREE_STAGES[TREE_STAGES.length - 1].image; // Use the last stage as fallback
+    const treeVideoSrc = stage ? stage.video : TREE_STAGES[TREE_STAGES.length - 1].video; // Use the last stage as fallback
 
-    // Set the source of the image and ensure responsive classes are applied
-    const treeImageElement = document.getElementById("tree");
-    treeImageElement.src = treeImg;
-    // Add classes for responsive sizing
-    treeImageElement.className = "w-full h-full object-contain";
+    // Set the source of the video and reload
+    const videoElement = document.getElementById("tree");
+    if (videoElement) {
+        // Log the source being set for debugging
+        console.log("Setting video source to:", treeVideoSrc);
+        videoElement.src = treeVideoSrc;
+        videoElement.load();
+        // Added play() to ensure video starts after loading new source
+        videoElement.play().catch(error => {
+            console.error("Video play failed:", error);
+            // Inform the user or handle the error gracefully
+            // This might happen if the user has not interacted with the page yet
+            showMessageBox("ไม่สามารถเล่นวิดีโอได้ กรุณาลองแตะที่หน้าจอเพื่อเริ่มเล่น");
+        });
+    }
 
     // Add score and stage display
     const currentStage = TREE_STAGES.find(stage => score >= stage.minScore);
@@ -185,8 +194,8 @@ function toggleConfig() {
 }
 
 function populateConfigPanel() {
-    // Set current sheet URL
-    document.getElementById("sheet-url-input").value = baseSheetURL;
+    // No need to set the sheet URL input, as it's now a select menu with hardcoded options.
+    // We will now only populate the threshold inputs.
 
     // Create threshold inputs
     const thresholdContainer = document.getElementById("threshold-inputs");
@@ -198,14 +207,17 @@ function populateConfigPanel() {
         div.innerHTML = `
             <label class="text-sm text-gray-700">${stage.name}: </label>
             <input type="number" id="threshold-${index}" value="${stage.minScore}" class="w-20 px-2 py-1 rounded-md border text-center">
-            <span class="text-gray-500">points</span>
+            <span class="text-gray-500">คะแนน</span>
         `;
         thresholdContainer.appendChild(div);
     });
 }
 
 function updateSheetURL() {
-    const newURL = document.getElementById("sheet-url-input").value.trim();
+    // Get the selected URL from the dropdown menu
+    const selectElement = document.getElementById("sheet-url-select");
+    const newURL = selectElement.value;
+
     if (newURL) {
         // Update the global variable
         baseSheetURL = newURL;
@@ -245,7 +257,7 @@ function showMessageBox(message) {
         <div class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full text-center">
             <p class="text-gray-800 mb-6">${message}</p>
             <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="this.parentNode.parentNode.remove()">
-                OK
+                ตกลง
             </button>
         </div>
     `;

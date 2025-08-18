@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<DOCTYPE html>
+<html! lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tree Growth Tracker</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link to our external stylesheet -->
+    <!-- Link to the external stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="p-4 flex items-center justify-center min-h-screen">
@@ -29,8 +29,8 @@
 
         <!-- Tree Visualization Area -->
         <div id="tree-area" class="flex flex-col items-center justify-center p-8 bg-green-50 rounded-2xl border border-green-200">
-            <!-- The tree image will be updated here -->
-            <img id="tree" src="new_soil.png.jpg" alt="A growing tree" class="transition-transform duration-500 ease-in-out transform hover:scale-105">
+            <!-- The tree video will be updated here -->
+            <video id="tree" autoplay loop muted playsinline src="541.mp4" alt="A growing tree" class="transition-transform duration-500 ease-in-out transform hover:scale-105"></video>
             <!-- Score and status will be updated here -->
             <div id="score-display" class="mt-4 text-center"></div>
             <div id="status" class="mt-4 flex gap-2"></div>
@@ -48,8 +48,12 @@
             <h3 class="text-xl font-bold mb-4 text-gray-800">Configuration</h3>
 
             <div class="mb-4">
-                <label for="sheet-url-input" class="block text-sm font-medium text-gray-700">Google Sheet URL (CSV Export)</label>
-                <input type="text" id="sheet-url-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                <label for="sheet-url-select" class="block text-sm font-medium text-gray-700">Google Sheet URL (CSV Export)</label>
+                <select id="sheet-url-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onchange="updateSheetURL()">
+                    <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNZpT2Gf8vpY5OibevC59cs1f97cEpstEZXih1vpb7Yft4Qcx4sgbpqMXX5tJ_2NyNwfD_9mRINKQb/pub?output=csv">Grade 6</option>
+                    <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRTH77zoccVRGrJXuoI1LeDTpy_6pjtaNUwlNjC1WtevCdzVjkxHKhIQtZiFwTJCxUfF2TtgGuxQVhn/pub?output=csv">Grade 3</option>
+                    <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vQGQ_TNdQ5R7N91Qi_Gl3Bt0O55w8L6sEGblAH2K0qgPdwBNIRxU9hIyVj_DR68C6X7ulDAxmdg3cOs/pub?output=csv">Grade 5</option>
+                </select>
                 <button onclick="updateSheetURL()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
                     Update URL
                 </button>
@@ -65,9 +69,9 @@
                 </button>
             </div>
         </div>
-
     </div>
-    <!-- Link to our external script -->
+    
+    <!-- Link to the external script file -->
     <script src="script.js"></script>
 </body>
 </html>

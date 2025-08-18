@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 body {
     font-family: 'Inter', sans-serif;
@@ -14,12 +14,12 @@ body {
     padding: 1rem;
 }
 
-/* Adjustments for the tree image to be fully responsive */
-img#tree {
+/* Adjustments for the video element to be fully responsive */
+video#tree {
     max-height: 100vh; /* Set a maximum height relative to the viewport height */
     width: 150%; /* Make the width fill its container */
     height: auto; /* Allow the height to adjust automatically */
-    object-fit: contain; /* Ensure the image fits without being distorted */
+    object-fit: contain; /* Ensure the video fits without being distorted */
     display: block; /* Remove any extra spacing */
     margin-left: auto;
     margin-right: auto;
