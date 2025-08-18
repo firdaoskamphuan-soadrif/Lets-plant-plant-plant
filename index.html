@@ -280,7 +280,7 @@
         
         <!-- Background Music -->
         <audio id="background-music" loop>
-            <source src="attached_assets/forest-ambience-296528 (1).mp3" type="audio/mpeg">
+            <source src="attached_assets/forest-nature-322637_1755515857740.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
     </div>
@@ -313,6 +313,7 @@
             const mainContent = document.getElementById("main-content");
             const audio = document.getElementById("background-music");
             const video = document.getElementById("tree");
+            const toggleButton = document.getElementById("music-toggle-button");
 
             // Hide the overlay and show the main content
             startOverlay.style.opacity = '0';
@@ -321,7 +322,12 @@
 
             // Start playing audio and video
             audio.volume = 0.3;
-            audio.play().catch(e => console.error("Audio playback failed:", e));
+            audio.play().then(() => {
+                toggleButton.innerHTML = `<span class="text-white text-lg md:text-xl">🎵</span>`;
+            }).catch(e => {
+                console.error("Audio playback failed:", e);
+                toggleButton.innerHTML = `<span class="text-white text-lg md:text-xl">🔇</span>`;
+            });
 
             video.play().catch(e => console.error("Video playback failed:", e));
         }
