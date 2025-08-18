@@ -27,6 +27,12 @@
             </button>
         </div>
 
+        <!-- Background Music -->
+        <audio id="background-music" autoplay loop>
+            <source src="attached_assets/forest-nature-322637_1755515857740.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
         <!-- Tree Visualization Area -->
         <div id="tree-area" class="flex flex-col items-center justify-center p-8 bg-green-50 rounded-2xl border border-green-200">
             <!-- The tree video will be updated here -->
@@ -40,6 +46,9 @@
         <div class="text-center mt-6">
             <button onclick="toggleConfig()" class="text-green-600 hover:text-green-800 text-sm font-semibold transition-colors">
                 ⚙️ Advanced Configuration
+            </button>
+            <button onclick="toggleMusic()" class="ml-4 text-green-600 hover:text-green-800 text-sm font-semibold transition-colors" id="music-toggle">
+                🎵 Music On
             </button>
         </div>
 

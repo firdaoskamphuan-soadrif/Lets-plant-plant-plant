@@ -264,8 +264,41 @@ function showMessageBox(message) {
     document.body.appendChild(messageBox);
 }
 
+// Function to toggle background music
+function toggleMusic() {
+    const audio = document.getElementById("background-music");
+    const toggleButton = document.getElementById("music-toggle");
+    
+    if (audio.paused) {
+        audio.play();
+        toggleButton.textContent = "🎵 Music On";
+    } else {
+        audio.pause();
+        toggleButton.textContent = "🔇 Music Off";
+    }
+}
+
+// Function to handle background music
+function initBackgroundMusic() {
+    const audio = document.getElementById("background-music");
+    
+    // Try to play the music
+    audio.play().catch(error => {
+        console.log("Autoplay prevented by browser policy:", error);
+        // Add a click handler to start music on first user interaction
+        document.addEventListener('click', function startMusic() {
+            audio.play();
+            document.removeEventListener('click', startMusic);
+        }, { once: true });
+    });
+    
+    // Set volume to a comfortable level
+    audio.volume = 0.3;
+}
+
 // Call this function when the page loads to populate the dropdown and load initial data
 window.onload = async function() {
     await fetchAndPopulateStudentDropdown();
     loadStudentData(); // โหลดข้อมูลเมื่อหน้าเว็บเปิดครั้งแรก
+    initBackgroundMusic(); // Initialize background music
 };
