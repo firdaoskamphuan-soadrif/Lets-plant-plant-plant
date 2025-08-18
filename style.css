@@ -1,40 +1,50 @@
-import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
+/* Custom CSS for a smoother, more fluid experience */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f0fdf4; /* Light green background */
+    background-color: #f0fdf4; /* A soft, nature-inspired green background */
     font-size: 1.125rem; /* Make text a bit larger for readability */
-    margin: 0;
-    padding: 0;
 }
 
-.container {
-    max-width: 90%; /* Adjust container width for better mobile experience */
-    margin: auto;
-    padding: 1rem;
+/* Loading overlay for a smooth user experience */
+.loading-overlay {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
 }
 
-/* Adjustments for the video element to be fully responsive */
-video#tree {
-    max-height: 100vh; /* Set a maximum height relative to the viewport height */
-    width: 150%; /* Make the width fill its container */
-    height: auto; /* Allow the height to adjust automatically */
-    object-fit: contain; /* Ensure the video fits without being distorted */
-    display: block; /* Remove any extra spacing */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#status img {
-    width: 80px;
-    height: 60px;
-}
-
-input, select {
-    border: 1px solid #d1d5db;
-    padding: 8px;
-    border-radius: 8px;
+/* The main content container will be centered and have a max width */
+.main-container {
+    transition: all 0.5s ease-in-out;
+    max-width: 100vw;
     width: 100%;
-    background-color: #fff;
-    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+/* * RESPONSIVE LAYOUT FOR WIDE SCREENS (Landscape on Desktop/Tablet)
+* This media query ensures a side-by-side layout for a better experience
+* when the screen is wide.
+*/
+@media (min-width: 1024px) {
+    .main-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        height: 90vh; /* Use viewport height to keep content within view */
+    }
+    .content-panel {
+        overflow-y: auto; /* Allow scrolling for long configuration panels */
+        height: 100%;
+    }
+    #tree-area {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    #tree {
+        max-height: 80vh; /* Prevent the video from becoming too large */
+    }
 }

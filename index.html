@@ -1,86 +1,657 @@
-<DOCTYPE html>
-<html! lang="en">
+<!DOCTYPE html>
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tree Growth Tracker</title>
+    <title>โปรเจกต์ต้นไม้โต</title>
+    
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Link to the external stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Custom CSS for a smoother, fully responsive, immersive experience */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            background-color: #000;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        /* Video container that now fills the screen */
+        .video-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Video element: object-fit: cover ensures the video fills the container
+           while maintaining its aspect ratio. This might crop parts of the video
+           if the aspect ratio of the video doesn't match the screen. */
+        #tree {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 1rem solid #4e352b; /* Thinner border */
+            border-radius: 1rem;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.8),
+                0 0.5rem 1.5rem rgba(0, 0, 0, 0.6);
+        }
+
+        /* Base styles for the control icon buttons */
+        .control-icon-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 9999px; /* A rounded circle */
+            padding: 0.5rem; /* Smaller padding for a smaller button */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .control-icon-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Status icon styles */
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 9999px;
+            transition: transform 0.3s ease;
+        }
+        .status-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Loading overlay for a smooth user experience */
+        .loading-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 20; /* Ensure it's on top of everything */
+            transition: opacity 0.3s ease;
+        }
+
+        /* Custom styles for the smaller, more beautiful config panel */
+        .config-panel-container {
+            max-width: 16rem; /* Keeps it small */
+            max-height: 80vh; /* Limits its height to a percentage of the viewport height */
+            overflow-y: auto; /* Allows vertical scrolling */
+            background-color: rgba(31, 41, 55, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(107, 114, 128, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .config-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+        .config-button:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Customize scrollbar appearance for better aesthetics */
+        .config-panel-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .config-panel-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .config-panel-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+        
+        /* New styles for the student info pop-up */
+        .popup-modal {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 30; /* Higher than loading overlay */
+        }
+        
+        .popup-content {
+            background-color: rgba(31, 41, 55, 0.9);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(107, 114, 128, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Style for the initial start overlay */
+        #start-overlay {
+            background-color: #1a1a1a;
+            z-index: 999; /* Ensure it's on top of everything */
+            transition: opacity 0.5s ease;
+        }
+        #start-button {
+            background-color: #10B981;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        #start-button:hover {
+            background-color: #059669;
+            transform: scale(1.05);
+        }
+
+    </style>
 </head>
-<body class="p-4 flex items-center justify-center min-h-screen">
-    <div class="container bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-        <h1 class="text-3xl font-bold text-green-800 text-center mb-6">มาปลูกต้นไม้กัน!</h1>
+<body class="p-0 m-0 overflow-hidden bg-black flex items-center justify-center">
+    <!-- Initial Start Overlay -->
+    <div id="start-overlay" class="fixed inset-0 flex flex-col items-center justify-center gap-8">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white text-center drop-shadow-lg animate-pulse">
+            โปรเจกต์ต้นไม้โต
+        </h1>
+        <button id="start-button" onclick="startGame()">
+            เริ่ม
+        </button>
+    </div>
 
-        <!-- Student Selector and Refresh Button -->
-        <div class="flex flex-col md:flex-row items-center gap-4 mb-6">
-            <div class="flex-1 w-full">
-                <label for="Student name" class="block text-sm font-medium text-gray-700">เลือกนักเรียน:</label>
-                <select id="Student name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                    <option value="">-- เลือกชื่อนักเรียน --</option>
-                    <!-- Student names will be populated dynamically by script.js -->
-                </select>
+    <!-- Main container to manage overall layout and spacing from edges -->
+    <div id="main-content" class="main-container relative w-full h-full flex items-center justify-center opacity-0 transition-opacity duration-1000">
+
+        <!-- New container for the video with a wood-like border -->
+        <div class="video-container relative overflow-hidden">
+            <!-- The background video element -->
+            <video id="tree" autoplay loop muted playsinline src="541.mp4" alt="A growing tree"></video>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="loading-overlay" class="loading-overlay absolute inset-0 flex items-center justify-center z-50 hidden">
+            <svg class="animate-spin h-12 w-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+
+        <!-- Top-center overlay panel for title and controls -->
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-xl p-4 md:p-8 z-20 flex flex-col items-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white text-center drop-shadow-lg mb-4">โปรเจกต์ต้นไม้โต</h1>
+
+            <!-- Student Selector - Updated to be smaller -->
+            <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4 w-full">
+                <div class="flex-1 w-full">
+                    <select id="Student name" class="mt-1 block w-full rounded-full border-transparent shadow-lg text-gray-800 py-2 px-4 text-base focus:border-green-500 focus:ring-green-500 transition-all duration-300" onchange="loadStudentData()">
+                        <option value="">-- กำลังโหลดชื่อนักเรียน... --</option>
+                        <!-- Student names will be populated dynamically by script.js -->
+                    </select>
+                </div>
             </div>
-            <button onclick="loadStudentData()" class="mt-4 md:mt-0 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
-                🔄 Refresh Data
+        </div>
+        
+        <!-- ปุ่มควบคุมต่างๆ ที่ย้ายไปมุมล่างขวา -->
+        <div class="absolute bottom-4 right-4 z-20 flex gap-2 md:gap-4">
+            <!-- ปุ่มตั้งค่า -->
+            <button onclick="toggleConfig()" class="control-icon-button">
+                <span class="text-lg md:text-xl">⚙️</span>
+            </button>
+            <!-- ปุ่มเสียง -->
+            <button onclick="toggleMusic()" class="control-icon-button" id="music-toggle-button">
+                <span class="text-lg md:text-xl">🎵</span>
+            </button>
+            <!-- ปุ่มเต็มหน้าจอ -->
+            <button onclick="toggleFullscreen()" class="control-icon-button" id="fullscreen-button">
+                <span class="text-lg md:text-xl">
+                    <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-maximize"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3m-18 0v3a2 2 0 0 0 2 2h3"/></svg>
+                </span>
             </button>
         </div>
 
-        <!-- Background Music -->
-        <audio id="background-music" autoplay loop>
-            <source src="attached_assets/forest-nature-322637_1755515857740.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
 
-        <!-- Tree Visualization Area -->
-        <div id="tree-area" class="flex flex-col items-center justify-center p-8 bg-green-50 rounded-2xl border border-green-200">
-            <!-- The tree video will be updated here -->
-            <video id="tree" autoplay loop muted playsinline src="541.mp4" alt="A growing tree" class="transition-transform duration-500 ease-in-out transform hover:scale-105"></video>
-            <!-- Score and status will be updated here -->
-            <div id="score-display" class="mt-4 text-center"></div>
-            <div id="status" class="mt-4 flex gap-2"></div>
+        <!-- Student Info Pop-up (hidden by default) -->
+        <div id="student-info-popup" class="popup-modal fixed inset-0 flex items-center justify-center p-4 hidden">
+            <div id="popup-content" class="popup-content relative w-full max-w-sm text-white text-center">
+                <!-- Close button for the pop-up -->
+                <button onclick="closeStudentInfoPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <div id="popup-content-inner" class="flex flex-col items-center">
+                    <!-- Dynamic content will be inserted here by JavaScript -->
+                </div>
+            </div>
         </div>
 
-        <!-- Configuration Panel Toggle Button -->
-        <div class="text-center mt-6">
-            <button onclick="toggleConfig()" class="text-green-600 hover:text-green-800 text-sm font-semibold transition-colors">
-                ⚙️ Advanced Configuration
-            </button>
-            <button onclick="toggleMusic()" class="ml-4 text-green-600 hover:text-green-800 text-sm font-semibold transition-colors" id="music-toggle">
-                🎵 Music On
-            </button>
-        </div>
 
         <!-- Configuration Panel (initially hidden) -->
-        <div id="config-panel" class="mt-6 p-6 border border-gray-300 bg-gray-50 rounded-lg hidden">
-            <h3 class="text-xl font-bold mb-4 text-gray-800">Configuration</h3>
-
-            <div class="mb-4">
-                <label for="sheet-url-select" class="block text-sm font-medium text-gray-700">Google Sheet URL (CSV Export)</label>
-                <select id="sheet-url-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onchange="updateSheetURL()">
-                    <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNZpT2Gf8vpY5OibevC59cs1f97cEpstEZXih1vpb7Yft4Qcx4sgbpqMXX5tJ_2NyNwfD_9mRINKQb/pub?output=csv">Grade 6</option>
-                    <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRTH77zoccVRGrJXuoI1LeDTpy_6pjtaNUwlNjC1WtevCdzVjkxHKhIQtZiFwTJCxUfF2TtgGuxQVhn/pub?output=csv">Grade 3</option>
-                    <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vQGQ_TNdQ5R7N91Qi_Gl3Bt0O55w8L6sEGblAH2K0qgPdwBNIRxU9hIyVj_DR68C6X7ulDAxmdg3cOs/pub?output=csv">Grade 5</option>
-                </select>
-                <button onclick="updateSheetURL()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
-                    Update URL
+        <div id="config-panel" class="fixed inset-0 flex items-center justify-center p-4 z-40 hidden">
+            <div class="config-panel-container w-full text-white relative">
+                <!-- Added a clear close button for better user experience -->
+                <button onclick="toggleConfig()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
-            </div>
 
-            <div class="mb-4">
-                <h4 class="font-semibold text-gray-800">Tree Growth Thresholds</h4>
-                <div id="threshold-inputs" class="mt-2 space-y-2">
-                    <!-- Threshold inputs will be dynamically generated here -->
+                <h3 class="text-xl font-bold mb-6 text-center">การตั้งค่า</h3>
+                
+                <div class="mb-4">
+                    <label for="sheet-url-select" class="block text-sm font-medium text-gray-200 mb-2">ลิงก์ Google Sheet</label>
+                    <select id="sheet-url-select" class="block w-full rounded-md border-gray-600 shadow-sm bg-gray-700 text-white p-2 text-sm" onchange="updateSheetURL()">
+                        <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vQNZpT2Gf8vpY5OibevC59cs1f97cEpstEZXih1vpb7Yft4Qcx4sgbpqMXX5tJ_2NyNwfD_9mRINKQb/pub?output=csv">Grade 6</option>
+                        <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRTH77zoccVRGrJXuoI1LeDTpy_6pjtaNUwlNjC1WtevCdzVjkxHKhIQtZiFwTJCxUfF2TtgGuxQVhn/pub?output=csv">Grade 3</option>
+                        <option value="https://docs.google.com/spreadsheets/d/e/2PACX-1vQGQ_TNdQ5R7N91Qi_Gl3Bt0O55w8L6sEGblAH2K0qgPdwBNIRxU9hIyVj_DR68C6X7ulDAxmdg3cOs/pub?output=csv">Grade 5</option>
+                    </select>
+                    <button onclick="updateSheetURL()" class="config-button mt-4 w-full text-sm">
+                        อัปเดตลิงก์
+                    </button>
                 </div>
-                <button onclick="updateThresholds()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
-                    Update Thresholds
-                </button>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-200 mt-6 mb-2 text-sm">เกณฑ์การเติบโต</h4>
+                    <div id="threshold-inputs" class="space-y-3">
+                        <!-- Threshold inputs will be dynamically generated here -->
+                    </div>
+                    <button onclick="updateThresholds()" class="config-button mt-4 w-full text-sm">
+                        อัปเดตเกณฑ์
+                    </button>
+                </div>
+                <!-- The close button at the bottom is now removed since there is one at the top right -->
             </div>
         </div>
+        
+        <!-- Background Music -->
+        <audio id="background-music" loop>
+            <source src="attached_assets/forest-ambience-296528 (1).mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
     
-    <!-- Link to the external script file -->
-    <script src="script.js"></script>
+    <script>
+        // Set the default Google Sheet URL
+        let baseSheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNZpT2Gf8vpY5OibevC59cs1f97cEpstEZXih1vpb7Yft4Qcx4sgbpqMXX5tJ_2NyNwfD_9mRINKQb/pub?output=csv";
+
+        // Tree growth configuration with video filenames
+        const TREE_STAGES = [
+            { minScore: 500, video: "552.mp4", name: "คะแนนสูงสุด! ต้นไม้เติบโตอย่างสมบูรณ์" },
+            { minScore: 450, video: "551.mp4", name: "ผลเต็มต้นแล้ว สุดยอด!" },
+            { minScore: 400, video: "550.mp4", name: "เริ่มมีผลแล้ววว คุณเก่งมาก" },
+            { minScore: 350, video: "549.mp4", name: "คุณดูแลต้นไม้ดีมากเลย" },
+            { minScore: 300, video: "548.mp4", name: "ดอกเต็มต้นแล้ว รอผลได้เลยย" },
+            { minScore: 250, video: "547.mp4", name: "ดอกไม้ของคุณสวยมากเลย" },
+            { minScore: 200, video: "546.mp4", name: "โอ๊ะ มีดอกแล้ววว" },
+            { minScore: 150, video: "545.mp4", "name": "กำลังโตอย่างดีเลยนะ" },
+            { minScore: 100, video: "544.mp4", name: "โตขึ้นมากเลยยย" },
+            { minScore: 50, video: "543.mp4", name: "ต้นกล้าขึ้นแล้ว จะต้องโตขึ้นแน่นอน" },
+            { minScore: 20, video: "542.mp4", name: "หว่านเมล็ดพันธ์ุ รอดูต้นไม้โตได้เลย" },
+            { minScore: 0, video: "541.mp4", name: "คุณมีที่ดินแล้ว เพิ่มคะแนนเพี่อปลูกต้นไม้ของคุณ" }
+        ];
+
+        /**
+         * Starts the game by hiding the start overlay and playing media.
+         */
+        function startGame() {
+            const startOverlay = document.getElementById("start-overlay");
+            const mainContent = document.getElementById("main-content");
+            const audio = document.getElementById("background-music");
+            const video = document.getElementById("tree");
+
+            // Hide the overlay and show the main content
+            startOverlay.style.opacity = '0';
+            startOverlay.style.visibility = 'hidden';
+            mainContent.style.opacity = '1';
+
+            // Start playing audio and video
+            audio.volume = 0.3;
+            audio.play().catch(e => console.error("Audio playback failed:", e));
+
+            video.play().catch(e => console.error("Video playback failed:", e));
+        }
+
+        /**
+         * Fetches student names from the Google Sheet and populates the dropdown.
+         */
+        async function fetchAndPopulateStudentDropdown() {
+            console.log("Fetching student data from Google Sheet...");
+            const selectElement = document.getElementById("Student name");
+            selectElement.innerHTML = '<option value="">-- กำลังโหลดชื่อนักเรียน... --</option>';
+            selectElement.disabled = true;
+
+            const sheetURL = baseSheetURL + "&t=" + new Date().getTime();
+
+            try {
+                const response = await fetch(sheetURL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.text();
+                console.log("Data fetched successfully. Processing...");
+                
+                const rows = data.split("\n").slice(1);
+                const studentNames = new Set();
+                
+                rows.forEach(row => {
+                    const cols = row.split(",");
+                    if (cols.length > 1 && cols[1]?.trim() && cols[1].trim() !== 'Student name') {
+                        studentNames.add(cols[1].trim());
+                    }
+                });
+
+                // Clear the loading message and add a default option
+                selectElement.innerHTML = '<option value="">-- เลือกนักเรียน --</option>';
+                
+                // Add unique student names to the dropdown
+                if (studentNames.size > 0) {
+                    studentNames.forEach(name => {
+                        const option = document.createElement("option");
+                        option.value = name;
+                        option.textContent = name;
+                        selectElement.appendChild(option);
+                    });
+                    console.log("Student names populated successfully.");
+                } else {
+                    showMessageBox("ไม่พบรายชื่อนักเรียนใน Google Sheet กรุณาตรวจสอบลิงก์และข้อมูลในชีท");
+                    selectElement.innerHTML = '<option value="">-- ไม่พบรายชื่อ --</option>';
+                    console.log("No student names found in the sheet.");
+                }
+
+            } catch (error) {
+                console.error("Error populating dropdown:", error);
+                showMessageBox("ไม่สามารถโหลดรายชื่อนักเรียนได้ กรุณาตรวจสอบลิงก์และลองใหม่อีกครั้ง");
+                selectElement.innerHTML = '<option value="">-- ไม่สามารถโหลดได้ --</option>';
+            } finally {
+                selectElement.disabled = false;
+            }
+        }
+
+        /**
+         * Loads and displays the student's tree data based on their selected name.
+         */
+        async function loadStudentData() {
+            const selectElement = document.getElementById("Student name");
+            const studentName = selectElement.value.trim();
+            const loadingOverlay = document.getElementById("loading-overlay");
+
+            if (!studentName) {
+                // If no student is selected, close any open pop-ups and do nothing else.
+                closeStudentInfoPopup();
+                return;
+            }
+
+            loadingOverlay.classList.remove("hidden");
+            selectElement.disabled = true;
+
+            const sheetURL = baseSheetURL + "&t=" + new Date().getTime();
+
+            try {
+                const response = await fetch(sheetURL);
+                const data = await response.text();
+
+                const rows = data.split("\n").slice(1);
+                let studentFound = false;
+
+                for (let row of rows) {
+                    const cols = row.split(",");
+                    if (cols.length < 3) continue;
+
+                    const name = cols[1]?.trim() || "ไม่ทราบชื่อ";
+                    
+                    if (name === studentName) {
+                        const score = parseInt(cols[2]) || 0;
+                        const status = cols[3]?.trim().toLowerCase() || "";
+                        updateTree(score, status, name);
+                        studentFound = true;
+                        break;
+                    }
+                }
+
+                if (!studentFound) {
+                    showMessageBox("ไม่พบชื่อนักเรียนนี้ กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง");
+                    closeStudentInfoPopup();
+                }
+
+            } catch (error) {
+                console.error("Error loading student data:", error);
+                showMessageBox("ไม่สามารถโหลดข้อมูลนักเรียนได้ กรุณาตรวจสอบลิงก์และลองใหม่อีกครั้ง");
+            } finally {
+                loadingOverlay.classList.add("hidden");
+                selectElement.disabled = false;
+            }
+        }
+
+        /**
+         * Updates the video, score, and status based on the student's data.
+         * Now shows a pop-up instead of a fixed display.
+         * @param {number} score The student's score.
+         * @param {string} status The student's status string.
+         * @param {string} name The student's name.
+         */
+        function updateTree(score, status, name) {
+            const stage = TREE_STAGES.find(stage => score >= stage.minScore);
+            const treeVideoSrc = stage ? stage.video : TREE_STAGES[TREE_STAGES.length - 1].video;
+
+            const videoElement = document.getElementById("tree");
+            if (videoElement) {
+                videoElement.src = treeVideoSrc;
+                videoElement.load();
+                videoElement.play().catch(error => {
+                    console.error("Video play failed:", error);
+                    showMessageBox("ไม่สามารถเล่นวิดีโอได้ กรุณาลองแตะที่หน้าจอเพื่อเริ่มเล่น");
+                });
+            }
+
+            const currentStage = TREE_STAGES.find(stage => score >= stage.minScore);
+            const popupContent = document.getElementById("popup-content-inner");
+
+            // Build the content for the pop-up
+            let popupHtml = `
+                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4 drop-shadow-lg">ข้อมูลนักเรียน</h3>
+                <div class="text-xl md:text-2xl font-extrabold text-white mb-2 drop-shadow-lg animate-fade-in">
+                    ${name || 'ไม่ทราบชื่อ'}
+                </div>
+                <div class="text-base md:text-lg text-gray-200 mb-4">
+                    คะแนน: ${score} - ${currentStage ? currentStage.name : 'ไม่ทราบระยะ'}
+                </div>
+                <div id="status-icons" class="flex flex-wrap justify-center gap-3 mt-4"></div>
+            `;
+            popupContent.innerHTML = popupHtml;
+
+            const statusDiv = document.getElementById("status-icons");
+            const iconSize = 'w-16 h-16 md:w-20 md:h-20';
+
+            if (status.includes("storm")) {
+                statusDiv.innerHTML += `
+                    <div class="flex flex-col items-center">
+                        <img src="S__4628506.jpg" alt="Storm" class="${iconSize} rounded-full shadow-lg border-2 border-red-500 status-icon">
+                        <span class="text-xs text-white font-semibold mt-1 drop-shadow-md">พายุ!</span>
+                    </div>
+                `;
+            }
+            if (status.includes("worm")) {
+                statusDiv.innerHTML += `
+                    <div class="flex flex-col items-center">
+                        <img src="S__4628525.jpg" alt="Worm" class="${iconSize} rounded-full shadow-lg border-2 border-yellow-500 status-icon">
+                        <span class="text-xs text-white font-semibold mt-1 drop-shadow-md">หนอน!</span>
+                    </div>
+                `;
+            }
+            if (status.includes("sick")) {
+                statusDiv.innerHTML += `
+                    <div class="flex flex-col items-center">
+                        <img src="S__4628508.jpg" alt="Sick" class="${iconSize} rounded-full shadow-lg border-2 border-blue-500 status-icon">
+                        <span class="text-xs text-white font-semibold mt-1 drop-shadow-md">ต้นไม้ป่วย!</span>
+                    </div>
+                `;
+            }
+
+            // Show the pop-up
+            document.getElementById("student-info-popup").classList.remove("hidden");
+        }
+
+        /**
+         * Closes the student info pop-up.
+         */
+        function closeStudentInfoPopup() {
+            document.getElementById("student-info-popup").classList.add("hidden");
+        }
+
+
+        /**
+         * Updates the Google Sheet URL from the dropdown.
+         */
+        function updateSheetURL() {
+            const selectElement = document.getElementById("sheet-url-select");
+            const newURL = selectElement.value;
+
+            if (newURL) {
+                baseSheetURL = newURL;
+                showMessageBox("URL ของ Google Sheet ถูกอัปเดตแล้ว กำลังโหลดข้อมูลใหม่...");
+                fetchAndPopulateStudentDropdown();
+            }
+        }
+
+        /**
+         * Toggles the visibility of the advanced configuration panel.
+         */
+        function toggleConfig() {
+            const configPanel = document.getElementById("config-panel");
+            configPanel.classList.toggle("hidden");
+            if (!configPanel.classList.contains("hidden")) {
+                populateConfigPanel();
+            }
+        }
+
+        /**
+         * Populates the configuration panel with current threshold values.
+         */
+        function populateConfigPanel() {
+            const thresholdContainer = document.getElementById("threshold-inputs");
+            thresholdContainer.innerHTML = "";
+
+            TREE_STAGES.forEach((stage, index) => {
+                const div = document.createElement("div");
+                div.className = "flex items-center justify-between gap-2";
+                div.innerHTML = `
+                    <label class="text-sm text-gray-200">${stage.name}:</label>
+                    <div class="flex items-center gap-1">
+                        <input type="number" id="threshold-${index}" value="${stage.minScore}" class="w-20 px-2 py-1 rounded-md border text-center text-gray-900 text-sm">
+                        <span class="text-gray-200 text-sm">คะแนน</span>
+                    </div>
+                `;
+                thresholdContainer.appendChild(div);
+            });
+        }
+
+        /**
+         * Updates the tree growth thresholds based on user input.
+         */
+        function updateThresholds() {
+            TREE_STAGES.forEach((stage, index) => {
+                const input = document.getElementById(`threshold-${index}`);
+                if (input) {
+                    stage.minScore = parseInt(input.value) || 0;
+                }
+            });
+
+            TREE_STAGES.sort((a, b) => b.minScore - a.minScore);
+            showMessageBox("Thresholds updated! Select a student to see the changes.");
+
+            const selectedStudent = document.getElementById("Student name").value;
+            if (selectedStudent) {
+                loadStudentData();
+            }
+        }
+
+        /**
+         * Displays a custom message box as a modal.
+         * @param {string} message The message to display.
+         */
+        function showMessageBox(message) {
+            const messageBox = document.createElement("div");
+            messageBox.id = "message-box";
+            messageBox.className = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4";
+            messageBox.innerHTML = `
+                <div class="bg-gray-800 bg-opacity-90 p-8 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-white mb-6">${message}</p>
+                    <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="this.parentNode.parentNode.remove()">
+                        ตกลง
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+        }
+
+        /**
+         * Toggles the background music on and off.
+         */
+        function toggleMusic() {
+            const audio = document.getElementById("background-music");
+            const toggleButton = document.getElementById("music-toggle-button");
+            
+            if (audio.paused) {
+                audio.play().then(() => {
+                    toggleButton.innerHTML = `<span class="text-white text-lg md:text-xl">🎵</span>`;
+                }).catch(error => {
+                    console.error("Autoplay failed:", error);
+                    showMessageBox("ไม่สามารถเล่นเพลงอัตโนมัติได้ กรุณาแตะปุ่มอีกครั้ง");
+                });
+            } else {
+                audio.pause();
+                toggleButton.innerHTML = `<span class="text-white text-lg md:text-xl">🔇</span>`;
+            }
+        }
+
+        /**
+         * Toggles fullscreen mode for the document.
+         */
+        function toggleFullscreen() {
+            const docElement = document.documentElement;
+            const fullscreenIcon = document.getElementById("fullscreen-icon");
+
+            if (document.fullscreenElement) {
+                // Exit fullscreen
+                document.exitFullscreen();
+                // Update icon to maximize
+                fullscreenIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3m-18 0v3a2 2 0 0 0 2 2h3"/>`;
+            } else {
+                // Request fullscreen
+                docElement.requestFullscreen();
+                // Update icon to minimize
+                fullscreenIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3m-18 0h3a2 2 0 0 1 2 2v3"/>`;
+            }
+        }
+
+        /**
+         * Initializes the background music settings.
+         */
+        function initBackgroundMusic() {
+            const audio = document.getElementById("background-music");
+            audio.volume = 0.3;
+        }
+
+        // Function to handle the initial page load logic
+        window.onload = async function() {
+            initBackgroundMusic();
+            await fetchAndPopulateStudentDropdown();
+        };
+    </script>
 </body>
 </html>
